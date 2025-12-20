@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.linear_model import Lasso
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 
 N = 2000 # number of loops
@@ -42,25 +41,39 @@ def main():
         data[i + 1] = RungeKutta(data[i], model)
 
     ax = plt.figure().add_subplot(projection='3d')
+    ax.set_title("Lorenz model")
     ax.plot(data[:, 0], data[:, 1], data[:, 2])
     plt.show()
 
-    shift = 1
-
-    x = data[0:(N + 1 - shift)]
-    y = data[shift:N + 1]
+    x = data[0:(N // 2)]
+    y = data[1:(N // 2 + 1)]
 
     lasso = Lasso(alpha=0.01, max_iter=1000)
     lasso.fit(x, y)
 
     y_pred = lasso.predict(x)
-    mse = mean_squared_error(y, y_pred)
+    train_mse = mean_squared_error(y, y_pred)
 
-    print(mse)
+    print("Training error: {}".format(train_mse))
 
     ax = plt.figure().add_subplot(projection='3d')
+    ax.set_title('Lorenz model and predicted train data')
     ax.plot(data[:, 0], data[:, 1], data[:, 2])
     ax.plot(y_pred[:, 0], y_pred[:, 1], y_pred[:, 2])
+    ax.legend(labels=['Lorenz model', 'Predicted train data'])
+    plt.show()
+
+    y_pred = lasso.predict(data[N // 2:])
+    y_test = data[(N // 2):]
+    test_mse = mean_squared_error(y_test, y_pred)
+
+    print("Test error: {}".format(test_mse))
+
+    ax = plt.figure().add_subplot(projection='3d')
+    ax.set_title('Lorenz model and predicted test data')
+    ax.plot(data[:, 0], data[:, 1], data[:, 2])
+    ax.plot(y_pred[:, 0], y_pred[:, 1], y_pred[:, 2])
+    ax.legend(labels=['Lorenz model', 'Predicted test data'])
     plt.show()
 
 if __name__ == "__main__":
