@@ -49,7 +49,7 @@ def main():
 
     x = data[0:m]
     y = data[1:(m + 1)]
-    y_test = data[m:]
+    y_test = data[(m + 1):]
 
     print('Linear regression')
     lr = LinearRegression()
@@ -59,7 +59,7 @@ def main():
     train_mse = mean_squared_error(y, y_pred_r_train)
     print("Training error: {}".format(train_mse))
 
-    y_pred_r_test = lr.predict(data[m:])
+    y_pred_r_test = lr.predict(data[m:N])
     test_mse = mean_squared_error(y_test, y_pred_r_test)
     print("Test error: {}".format(test_mse))
 
@@ -71,7 +71,7 @@ def main():
     train_mse = mean_squared_error(y, y_pred_ridge_train)
     print("Training error: {}".format(train_mse))
 
-    y_pred_ridge_test = ridge.predict(data[m:])
+    y_pred_ridge_test = ridge.predict(data[m:N])
     test_mse = mean_squared_error(y_test, y_pred_ridge_test)
     print("Test error: {}".format(test_mse))
 
@@ -83,7 +83,7 @@ def main():
     train_mse = mean_squared_error(y, y_pred_lasso_train)
     print("Training error: {}".format(train_mse))
     
-    y_pred_lasso_test = lasso.predict(data[m:])
+    y_pred_lasso_test = lasso.predict(data[m:N])
     test_mse = mean_squared_error(y_test, y_pred_lasso_test)
     print("Test error: {}".format(test_mse))
 
