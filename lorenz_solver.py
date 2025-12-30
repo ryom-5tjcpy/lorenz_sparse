@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.integrate import odeint
 from sklearn.linear_model import Lasso
 import matplotlib.pyplot as plt
 
