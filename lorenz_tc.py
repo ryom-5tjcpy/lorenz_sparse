@@ -5,7 +5,7 @@ from sklearn.metrics import mean_squared_error
 
 N = 2000 # number of loops
 t_n = 20 # end time
-h = t_n / N # inverval
+h = t_n / N # interval
 
 dim = 3 # dimension
 x_init = np.array([1.0, 1.0, 1.0])
@@ -75,7 +75,7 @@ def main():
     test_mse = mean_squared_error(y_test, y_pred_ridge_test)
     print("Test error: {}".format(test_mse))
 
-    print('LASSO rigression')
+    print('LASSO regression')
     lasso = Lasso(alpha=0.01, max_iter=1000)
     lasso.fit(x, y)
 

@@ -5,7 +5,7 @@ from sklearn.metrics import mean_squared_error
 
 N = 2000 # number of loops
 t_n = 20 # end time
-h = t_n / N # inverval
+h = t_n / N # interval
 
 dim = 3 # dimension
 x_init = np.array([1.0, 1.0, 1.0])
@@ -35,71 +35,12 @@ class LorenzModel:
 def main():
     data = np.zeros((N + 1, dim))
     model = LorenzModel(10, 8 / 3, 28)
+    y = np.zeros([N, dim])
 
     data[0] = x_init.copy()
     for i in range(N):
+        y[i] = model(data[i])
         data[i + 1] = RungeKutta(data[i], model)
-
-    ax = plt.figure().add_subplot(projection='3d')
-    ax.set_title("Lorenz model")
-    ax.plot(data[:, 0], data[:, 1], data[:, 2])
-    plt.show()
-
-    m = N // 2
-
-    x = data[0:m]
-    y = data[1:(m + 1)]
-    y_test = data[(m + 1):]
-
-    print('Linear regression')
-    lr = LinearRegression()
-    lr.fit(x, y)
-
-    y_pred_r_train = lr.predict(x)
-    train_mse = mean_squared_error(y, y_pred_r_train)
-    print("Training error: {}".format(train_mse))
-
-    y_pred_r_test = lr.predict(data[m:N])
-    test_mse = mean_squared_error(y_test, y_pred_r_test)
-    print("Test error: {}".format(test_mse))
-
-    print('Ridge regression')
-    ridge = Ridge(alpha=0.01, max_iter=1000)
-    ridge.fit(x, y)
-
-    y_pred_ridge_train = ridge.predict(x)
-    train_mse = mean_squared_error(y, y_pred_ridge_train)
-    print("Training error: {}".format(train_mse))
-
-    y_pred_ridge_test = ridge.predict(data[m:N])
-    test_mse = mean_squared_error(y_test, y_pred_ridge_test)
-    print("Test error: {}".format(test_mse))
-
-    print('LASSO rigression')
-    lasso = Lasso(alpha=0.01, max_iter=1000)
-    lasso.fit(x, y)
-
-    y_pred_lasso_train = lasso.predict(x)
-    train_mse = mean_squared_error(y, y_pred_lasso_train)
-    print("Training error: {}".format(train_mse))
-    
-    y_pred_lasso_test = lasso.predict(data[m:N])
-    test_mse = mean_squared_error(y_test, y_pred_lasso_test)
-    print("Test error: {}".format(test_mse))
-
-    ax = plt.figure().add_subplot(projection='3d')
-    ax.set_title('Lorenz model and predicted training data')
-    ax.plot(data[:, 0], data[:, 1], data[:, 2])
-    ax.plot(y_pred_lasso_train[:, 0], y_pred_lasso_train[:, 1], y_pred_lasso_train[:, 2])
-    ax.legend(labels=['Lorenz model', 'LASSO regression'])
-    plt.show()
-
-    ax = plt.figure().add_subplot(projection='3d')
-    ax.set_title('Lorenz model and predicted test data')
-    ax.plot(data[:, 0], data[:, 1], data[:, 2])
-    ax.plot(y_pred_lasso_test[:, 0], y_pred_lasso_test[:, 1], y_pred_lasso_test[:, 2])
-    ax.legend(labels=['Lorenz model', 'LASSO regression'])
-    plt.show()
 
 if __name__ == "__main__":
     main()
