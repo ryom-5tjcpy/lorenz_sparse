@@ -1,6 +1,6 @@
 import numpy as np
+import pandas as pd
 from sklearn.linear_model import Lasso, LinearRegression, Ridge
-from sklearn.metrics import mean_squared_error
 
 N = 10000 # number of loops
 t_n = 40 # end time
@@ -42,6 +42,10 @@ def create_polynomial_mat(source):
 
 def main():
     data = np.zeros((N + 1, dim))
+
+    A = 10
+    B = 8 / 3
+    R = 28
     model = LorenzModel(10, 8 / 3, 28)
     y = np.zeros([N, dim])
 
@@ -52,9 +56,38 @@ def main():
 
     poly_mat = create_polynomial_mat(data)
 
+    dictionary = ['dxdt', 'dydt', 'dzdt']
+    axis = ['1', 'x', 'y', 'z', 'x^2', 'y^2', 'z^2', 'xy', 'yz', 'zx']
+    print("-" * 40)
+    coff = [
+        [0, -A, A, 0, 0, 0, 0, 0, 0, 0],
+        [0, R, -1, 0, 0, 0, 0, 0, 0, -1],
+        [0, 0, 0, B, 0, 0, 0, 1, 0, 0]
+    ]
+    print(pd.DataFrame(coff, dictionary, axis))
+    print("-" * 40)
+
+    print("Linear regression")
+    print("-" * 40)
+    lr = LinearRegression()
+    lr.fit(poly_mat, y)
+    print(pd.DataFrame(lr.coef_, dictionary, axis))
+    print("-" * 40)
+
+    print("Ridge regression")
+    print("-" * 40)
+    ridge = Ridge(0.1, max_iter=10000)
+    ridge.fit(poly_mat, y)
+    print(pd.DataFrame(ridge.coef_, dictionary, axis))
+
+    print("-" * 40)
+
+    print("LASSO regression")
+    print("-" * 40)
     lasso = Lasso(0.1, max_iter=10000)
     lasso.fit(poly_mat, y)
-    print(lasso.coef_)
+    print(pd.DataFrame(lasso.coef_, dictionary, axis))
+    print("-" * 40)
 
 if __name__ == "__main__":
     main()
