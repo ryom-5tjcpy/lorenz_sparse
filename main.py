@@ -3,8 +3,8 @@ import numpy as np
 from sklearn.linear_model import Lasso, LinearRegression, Ridge
 from sklearn.metrics import mean_squared_error
 
-N = 2000 # number of loops
-t_n = 20 # end time
+N = 10000 # number of loops
+t_n = 40 # end time
 h = t_n / N # interval
 
 dim = 3 # dimension
@@ -27,10 +27,19 @@ class LorenzModel:
 
     def __call__(self, x):
         dx_dt = -self.a * x[0] + self.a * x[1]
-        dy_dt = (self.r - x[2]) * x[0] - x[1]
+        dy_dt = (self.r - x[2]) * x[0] - x[1]   
         dz_dt = x[0] * x[1] - self.b * x[2]
 
         return np.array([dx_dt, dy_dt, dz_dt])
+    
+def create_polynomial_mat(source):
+    x = source[:-1, 0]
+    y = source[:-1, 1]
+    z = source[:-1, 2]
+
+    X = np.vstack([np.ones_like(x), x, y, z, x ** 2, y ** 2, z ** 2, x * y, y * z, z * x]).T
+
+    return X
 
 def main():
     data = np.zeros((N + 1, dim))
@@ -41,6 +50,12 @@ def main():
     for i in range(N):
         y[i] = model(data[i])
         data[i + 1] = RungeKutta(data[i], model)
+
+    poly_mat = create_polynomial_mat(data)
+
+    lasso = Lasso(0.1, max_iter=10000)
+    lasso.fit(poly_mat, y)
+    print(lasso.coef_)
 
 if __name__ == "__main__":
     main()
